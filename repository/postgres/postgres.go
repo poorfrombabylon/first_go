@@ -18,7 +18,7 @@ type d struct {
 }
 
 var databaseUrl = d{
-	host:     "localhost",
+	host:     "db",
 	port:     5432,
 	user:     "postgres",
 	password: "228",
@@ -33,17 +33,17 @@ type PostgresDB struct {
 }
 
 func NewPostgresDB() *PostgresDB {
-	db, err := sql.Open("postgres", fmt.Sprintf(" user=%s dbname=%s password=%s sslmode=%s",
-		databaseUrl.user, databaseUrl.dbname, databaseUrl.password, databaseUrl.sslmode))
+	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=%s",
+		databaseUrl.host, databaseUrl.port, databaseUrl.user, databaseUrl.dbname, databaseUrl.password, databaseUrl.sslmode))
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println("connected")
+		fmt.Println(err)
 	}
 
 	err = db.Ping()
 	if err != nil {
-		fmt.Println("postgres database does not exist")
+		fmt.Println(err)
 	}
 
 	query := fmt.Sprintf("CREATE TABLE IF NOT EXISTS restapi (LongUrls varchar(255) PRIMARY KEY, ShortUrls varchar(255) not null unique);")
@@ -71,7 +71,6 @@ func (db *PostgresDB) GetUrl(longUrl string) (string, error) {
 	return shortUrl, nil
 }
 
-
 func (db *PostgresDB) PostUrl(longUrl string) (string, error) {
 	shortUrl := service.Shorten(longUrl)
 	fmt.Println(longUrl)
@@ -88,4 +87,3 @@ func (db *PostgresDB) PostUrl(longUrl string) (string, error) {
 	//}
 	return shortUrl, nil
 }
-

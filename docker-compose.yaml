@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 228
+      POSTGRES_DB: restapi
+    ports:
+      - "5433:5432"
+    container_name: postgres
+  test-sleep:
+    image: busybox
+    command: [ "/bin/sleep", "20" ]
+    depends_on:
+      - db
+  server:
+    build: .
+    links:
+      - db
+    depends_on:
+      - test-sleep
+    ports:
+      - "8080:8080"
+    command:
+      - out

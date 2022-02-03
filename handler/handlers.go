@@ -30,6 +30,7 @@ var longUrlFormTmpl = []byte(`
 var storage string
 
 func Stor_type(st_type string) {
+	fmt.Println(st_type)
 	storage = st_type
 }
 
@@ -48,6 +49,7 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 
 		if storage == "in" {
 			shortUrl, err := db_in.GetShortUrl(longUrl)
+			fmt.Println("in memory")
 			if err != nil {
 				fmt.Fprintln(w, err)
 			}
@@ -56,11 +58,13 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 		if storage == "out" {
 			shortUrl, err := db_out.GetUrl(longUrl)
 
-			if err!=nil{
+			if err != nil {
 				fmt.Fprintln(w, err)
 			}
 
 			w.Write([]byte(fmt.Sprintf("short: %v for %v", shortUrl, longUrl)))
+		} else {
+			fmt.Println("Storage type was not choosen")
 		}
 
 	}
@@ -73,6 +77,7 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "long: ", longUrl, r.Method)
 
 		if storage == "in" {
+			fmt.Println("in memory")
 			shortUrl, err := db_in.PostUrl(longUrl)
 			if err != nil {
 				fmt.Fprintln(w, err)
