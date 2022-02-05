@@ -55,29 +55,30 @@ func NewPostgresDB() *PostgresDB {
 	return &PostgresDB{db: db}
 }
 
-func (db *PostgresDB) GetUrl(longUrl string) (string, error) {
+func (db *PostgresDB) GetUrl(shortUrl string) (string, error) {
 
-	var shortUrl string
-	fmt.Println(longUrl)
+	var longUrl string
+	fmt.Println(shortUrl)
 	//statement := fmt.Sprintf()
-	row := db.db.QueryRow("select ShortUrls from restapi where LongUrls = $1", longUrl)
+	row := db.db.QueryRow("select LongUrls from restapi where ShortUrls = $1", shortUrl)
 
-	err := row.Scan(&shortUrl)
+	err := row.Scan(&longUrl)
 
 	if err != nil {
 		return "", errors.New(fmt.Sprintf("error %v\n", err))
 	}
 
-	return shortUrl, nil
+	return longUrl, nil
 }
 
 func (db *PostgresDB) PostUrl(longUrl string) (string, error) {
 	shortUrl := service.Shorten(longUrl)
-	fmt.Println(longUrl)
+	fmt.Println(longUrl, shortUrl)
 	//var kek string
 	statement := fmt.Sprintf("INSERT INTO restapi (LongUrls, ShortUrls) VALUES ($1, $2)")
 	_, err := db.db.Exec(statement, longUrl, shortUrl)
 	if err != nil {
+		fmt.Println(err)
 		fmt.Println("LongUrl is already in db")
 		shortUrl, _ = db.GetUrl(longUrl)
 		//return "", errors.New(fmt.Sprintf("error  %v", err))

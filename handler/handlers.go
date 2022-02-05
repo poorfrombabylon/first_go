@@ -20,7 +20,7 @@ var longUrlFormTmpl = []byte(`
 	</body>
 	<body>
 		<form action = "/" method = "GET">
-			Find ShortUrl: <input type="text" name="longurl">
+			Find ShortUrl: <input type="text" name="shorturl">
 			<input type="submit" value="LOGIN">
 		</form>
 	</body>
@@ -40,29 +40,29 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 			w.Write(longUrlFormTmpl)
 			return
 		}()
-		longUrl := r.FormValue("longurl")
+		shortUrl := r.FormValue("shorturl")
 		//fmt.Fprintln(w, "long: ", longUrl)
 
-		if longUrl == "" {
+		if shortUrl == "" {
 			fmt.Fprintln(w, "incorrect input")
 		}
 
 		if storage == "in" {
-			shortUrl, err := db_in.GetShortUrl(longUrl)
+			longUrl, err := db_in.GetShortUrl(shortUrl)
 			fmt.Println("in memory")
 			if err != nil {
 				fmt.Fprintln(w, err)
 			}
-			w.Write([]byte(fmt.Sprintf("short: %v for %v", shortUrl, longUrl)))
+			w.Write([]byte(fmt.Sprintf("long: %v for %v", longUrl, shortUrl)))
 		}
 		if storage == "out" {
-			shortUrl, err := db_out.GetUrl(longUrl)
+			longUrl, err := db_out.GetUrl(shortUrl)
 
 			if err != nil {
 				fmt.Fprintln(w, err)
 			}
 
-			w.Write([]byte(fmt.Sprintf("short: %v for %v", shortUrl, longUrl)))
+			w.Write([]byte(fmt.Sprintf("long: %v for %v", longUrl, shortUrl)))
 		} else {
 			fmt.Println("Storage type was not choosen")
 		}

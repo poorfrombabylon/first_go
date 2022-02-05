@@ -32,14 +32,14 @@ func (db InMemory) GetUrl(shorturl string) (string, error) {
 	return "", nil
 }
 
-func (db InMemory) GetShortUrl(longurl string) (string, error) {
-	if longurl == "" {
+func (db InMemory) GetShortUrl(shortUrl string) (string, error) {
+	if shortUrl == "" {
 		return "", errors.New("invalid input")
 	}
 
 	for k, v := range db.UrlsMap {
-		if longurl == k {
-			return v, nil
+		if shortUrl == v {
+			return k, nil
 		}
 	}
 	return "", nil
